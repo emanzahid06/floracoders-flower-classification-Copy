@@ -20,9 +20,8 @@ st.write("Upload a flower image and let our AI model identify it!")
 @st.cache_resource
 def load_flower_model():
     return tf.keras.models.load_model(
-        "/content/drive/MyDrive/FloraCoders/floracoders_best_model.keras"
+"floracoders_best_model.keras"
     )
-
 model = load_flower_model()
 
 # Flower classes in the correct model order
