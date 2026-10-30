@@ -16,7 +16,6 @@ st.set_page_config(
 
 # ==================================================
 # FLOWER CLASSES
-# IMPORTANT: Keep training order unchanged
 # ==================================================
 class_names = [
     "dandelion",
@@ -35,11 +34,10 @@ flower_emojis = {
 }
 
 # ==================================================
-# CUSTOM PROFESSIONAL DESIGN
+# CUSTOM DESIGN
 # ==================================================
 st.markdown("""
 <style>
-
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap');
 
 .stApp {
@@ -220,7 +218,6 @@ div[data-testid="stButton"] > button:hover {
 #MainMenu, footer {
     visibility: hidden;
 }
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -230,31 +227,25 @@ div[data-testid="stButton"] > button:hover {
 # ==================================================
 st.markdown("""
 <div class="hero">
-
-    <div style="font-size:38px;">
-        🌷 🌸 🌼 🌺 🌻
-    </div>
-
-    <div class="brand">
-        FloraCoders
-    </div>
-
-    <div class="tagline">
-        A Little Magic in Every Flower ✨
-    </div>
-
-    <div class="description">
-        Discover the beauty of nature through Artificial Intelligence.
-        Upload a photo or capture a flower with your camera!
-    </div>
-
-    <div style="margin-top:20px;">
-        <span class="pill">🌿 5 Flower Species</span>
-        <span class="pill">🤖 Deep Learning</span>
-        <span class="pill">📷 Live Camera</span>
-        <span class="pill">💗 AI Powered</span>
-    </div>
-
+<div style="font-size:38px;">
+🌷 🌸 🌼 🌺 🌻
+</div>
+<div class="brand">
+FloraCoders
+</div>
+<div class="tagline">
+A Little Magic in Every Flower ✨
+</div>
+<div class="description">
+Discover the beauty of nature through Artificial Intelligence.
+Upload a photo or capture a flower with your camera!
+</div>
+<div style="margin-top:20px;">
+<span class="pill">🌿 5 Flower Species</span>
+<span class="pill">🤖 Deep Learning</span>
+<span class="pill">📷 Live Camera</span>
+<span class="pill">💗 AI Powered</span>
+</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -270,7 +261,6 @@ def load_flower_model():
 
 try:
     model = load_flower_model()
-
 except Exception as e:
     st.error("Flower AI model could not be loaded.")
     st.exception(e)
@@ -281,9 +271,7 @@ except Exception as e:
 # FLOWER PREDICTION FUNCTION
 # ==================================================
 def predict_flower(image):
-
     image = image.convert("RGB")
-
     resized_image = image.resize((180, 180))
 
     image_array = np.array(
@@ -291,10 +279,7 @@ def predict_flower(image):
         dtype=np.float32
     ) / 255.0
 
-    image_array = np.expand_dims(
-        image_array,
-        axis=0
-    )
+    image_array = np.expand_dims(image_array, axis=0)
 
     predictions = model.predict(
         image_array,
@@ -305,12 +290,9 @@ def predict_flower(image):
         raise ValueError("Unexpected model output.")
 
     predicted_index = int(np.argmax(predictions))
-
     flower = class_names[predicted_index]
 
-    confidence = float(
-        predictions[predicted_index]
-    ) * 100
+    confidence = float(predictions[predicted_index]) * 100
 
     return {
         "flower": flower,
@@ -330,23 +312,18 @@ left_col, right_col = st.columns(
 
 
 # ==================================================
-# LEFT: IMAGE UPLOAD + LIVE CAMERA
+# LEFT: IMAGE UPLOAD + CAMERA
 # ==================================================
 with left_col:
-
     with st.container(border=True):
 
         st.markdown(
-            '<div class="section-title">'
-            '🌸 Discover Your Flower'
-            '</div>',
+            '<div class="section-title">🌸 Discover Your Flower</div>',
             unsafe_allow_html=True
         )
 
         st.markdown(
-            '<div class="section-subtitle">'
-            'Choose your favourite way to identify a flower.'
-            '</div>',
+            '<div class="section-subtitle">Choose your favourite way to identify a flower.</div>',
             unsafe_allow_html=True
         )
 
@@ -354,11 +331,8 @@ with left_col:
             ["📁 Upload Photo", "📷 Live Camera"]
         )
 
-        # ------------------------------------------
         # IMAGE UPLOAD
-        # ------------------------------------------
         with upload_tab:
-
             st.markdown("#### 🌷 Upload Your Flower")
 
             uploaded_file = st.file_uploader(
@@ -368,12 +342,8 @@ with left_col:
             )
 
             if uploaded_file is not None:
-
                 try:
-
-                    image = Image.open(
-                        uploaded_file
-                    ).convert("RGB")
+                    image = Image.open(uploaded_file).convert("RGB")
 
                     st.image(
                         image,
@@ -386,50 +356,35 @@ with left_col:
                         key="upload_predict",
                         use_container_width=True
                     ):
-
                         with st.spinner(
                             "Our AI is exploring your flower..."
                         ):
-
                             st.session_state["flower_result"] = (
                                 predict_flower(image)
                             )
-
                             st.session_state["result_source"] = (
                                 "Uploaded Image"
                             )
 
-                        st.success(
-                            "Flower prediction completed!"
-                        )
+                        st.success("Flower prediction completed!")
 
                 except Exception:
                     st.error(
                         "Unable to process this image. "
                         "Please upload another photo."
                     )
-
             else:
-
                 st.markdown(
-                    '<div class="small-note">'
-                    '💐 Choose a clear JPG or PNG flower picture.'
-                    '</div>',
+                    '<div class="small-note">💐 Choose a clear JPG or PNG flower picture.</div>',
                     unsafe_allow_html=True
                 )
 
-        # ------------------------------------------
-        # LIVE CAMERA
-        # ------------------------------------------
+        # CAMERA
         with camera_tab:
-
             st.markdown("#### 📷 Capture a Flower Live")
 
             st.markdown(
-                '<div class="small-note">'
-                'Allow camera access and point your camera '
-                'towards any flower.'
-                '</div>',
+                '<div class="small-note">Allow camera access and point your camera towards any flower.</div>',
                 unsafe_allow_html=True
             )
 
@@ -439,12 +394,8 @@ with left_col:
             )
 
             if camera_image is not None:
-
                 try:
-
-                    image = Image.open(
-                        camera_image
-                    ).convert("RGB")
+                    image = Image.open(camera_image).convert("RGB")
 
                     st.image(
                         image,
@@ -457,31 +408,23 @@ with left_col:
                         key="camera_predict",
                         use_container_width=True
                     ):
-
                         with st.spinner(
                             "AI is recognising your flower..."
                         ):
-
                             st.session_state["flower_result"] = (
                                 predict_flower(image)
                             )
-
                             st.session_state["result_source"] = (
                                 "Live Camera"
                             )
 
-                        st.success(
-                            "Camera flower identified!"
-                        )
+                        st.success("Camera flower identified!")
 
                 except Exception:
-
                     st.error(
                         "Unable to process the camera picture."
                     )
-
             else:
-
                 st.info(
                     "📸 Your camera preview will appear here. "
                     "Take a picture to continue."
@@ -492,57 +435,40 @@ with left_col:
 # RIGHT: RESULTS PANEL
 # ==================================================
 with right_col:
-
     with st.container(border=True):
 
         st.markdown(
-            '<div class="section-title">'
-            '🔮 AI Prediction Results'
-            '</div>',
+            '<div class="section-title">🔮 AI Prediction Results</div>',
             unsafe_allow_html=True
         )
 
         st.markdown(
-            '<div class="section-subtitle">'
-            'Discover what our trained CNN model recognises.'
-            '</div>',
+            '<div class="section-subtitle">Discover what our trained CNN model recognises.</div>',
             unsafe_allow_html=True
         )
 
-        result = st.session_state.get(
-            "flower_result"
-        )
+        result = st.session_state.get("flower_result")
 
         if result is not None:
-
             flower = result["flower"]
-
             confidence = result["confidence"]
 
-            st.markdown(
-                f"""
-                <div class="result-banner">
-
-                    <div style="font-size:55px;">
-                        {flower_emojis[flower]}
-                    </div>
-
-                    <div class="result-label">
-                        OUR AI PREDICTS
-                    </div>
-
-                    <div class="result-flower">
-                        {flower.title()}
-                    </div>
-
-                    <div class="confidence">
-                        {confidence:.2f}% Confidence
-                    </div>
-
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+            st.markdown(f"""
+<div class="result-banner">
+<div style="font-size:55px;">
+{flower_emojis[flower]}
+</div>
+<div class="result-label">
+OUR AI PREDICTS
+</div>
+<div class="result-flower">
+{flower.title()}
+</div>
+<div class="confidence">
+{confidence:.2f}% Confidence
+</div>
+</div>
+""", unsafe_allow_html=True)
 
             st.caption(
                 "Input method: "
@@ -554,62 +480,43 @@ with right_col:
             st.markdown("#### 🌈 All Flower Prediction Scores")
 
             for i, name in enumerate(class_names):
+                score = float(result["scores"][i])
 
-                score = float(
-                    result["scores"][i]
-                )
-
-                score_col, bar_col = st.columns(
-                    [1.3, 3]
-                )
+                score_col, bar_col = st.columns([1.3, 3])
 
                 with score_col:
-
                     st.write(
                         f"{flower_emojis[name]} {name.title()}"
                     )
 
                 with bar_col:
-
                     st.progress(
                         min(max(score, 0.0), 1.0),
                         text=f"{score * 100:.2f}%"
                     )
 
             st.markdown(
-                '<div class="small-note">'
-                'Prediction generated using our trained CNN model.'
-                '</div>',
+                '<div class="small-note">Prediction generated using our trained CNN model.</div>',
                 unsafe_allow_html=True
             )
 
         else:
-
-            st.markdown(
-                """
-                <div style="text-align:center; padding:40px 10px;">
-
-                    <div style="font-size:85px;">
-                        💐
-                    </div>
-
-                    <h3 style="color:#815391;">
-                        Your Results Will Bloom Here!
-                    </h3>
-
-                    <p style="color:#897991; font-size:14px;">
-                        Upload a flower image or capture one
-                        using Live Camera to discover its species.
-                    </p>
-
-                    <div style="font-size:30px; margin-top:20px;">
-                        🌼 🌷 🌻 🌹 🌸
-                    </div>
-
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+            st.markdown("""
+<div style="text-align:center; padding:40px 10px;">
+<div style="font-size:85px;">
+💐
+</div>
+<h3 style="color:#815391;">
+Your Results Will Bloom Here!
+</h3>
+<p style="color:#897991; font-size:14px;">
+Upload a flower image or capture one using Live Camera to discover its species.
+</p>
+<div style="font-size:30px; margin-top:20px;">
+🌼 🌷 🌻 🌹 🌸
+</div>
+</div>
+""", unsafe_allow_html=True)
 
 
 # ==================================================
@@ -618,39 +525,25 @@ with right_col:
 st.markdown("---")
 
 st.markdown(
-    '<div class="section-title" style="text-align:center;">'
-    '🤖 Meet Our AI Model'
-    '</div>',
+    '<div class="section-title" style="text-align:center;">🤖 Meet Our AI Model</div>',
     unsafe_allow_html=True
 )
 
 st.markdown(
-    '<div class="section-subtitle" style="text-align:center;">'
-    'Our trained Convolutional Neural Network '
-    'recognises five flower categories.'
-    '</div>',
+    '<div class="section-subtitle" style="text-align:center;">Our trained Convolutional Neural Network recognises five flower categories.</div>',
     unsafe_allow_html=True
 )
 
 m1, m2, m3 = st.columns(3)
 
 with m1:
-    st.metric(
-        "Test Accuracy",
-        "89.09%"
-    )
+    st.metric("Test Accuracy", "89.09%")
 
 with m2:
-    st.metric(
-        "Flower Classes",
-        "5"
-    )
+    st.metric("Flower Classes", "5")
 
 with m3:
-    st.metric(
-        "Test Images",
-        "550"
-    )
+    st.metric("Test Images", "550")
 
 
 # ==================================================
@@ -659,70 +552,45 @@ with m3:
 st.markdown("---")
 
 st.markdown(
-    '<div class="section-title" style="text-align:center;">'
-    '🌺 Explore Our Little Garden'
-    '</div>',
+    '<div class="section-title" style="text-align:center;">🌺 Explore Our Little Garden</div>',
     unsafe_allow_html=True
 )
 
 st.markdown(
-    '<div class="section-subtitle" style="text-align:center;">'
-    'The five beautiful flower species learned by FloraCoders AI.'
-    '</div>',
+    '<div class="section-subtitle" style="text-align:center;">The five beautiful flower species learned by FloraCoders AI.</div>',
     unsafe_allow_html=True
 )
 
 gallery = st.columns(5)
 
 for col, name in zip(gallery, class_names):
-
     with col:
-
         with st.container(border=True):
-
-            st.markdown(
-                f"""
-                <div class="gallery-card">
-
-                    <div class="gallery-emoji">
-                        {flower_emojis[name]}
-                    </div>
-
-                    <div style="font-weight:700;">
-                        {name.title()}
-                    </div>
-
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+            st.markdown(f"""
+<div class="gallery-card">
+<div class="gallery-emoji">
+{flower_emojis[name]}
+</div>
+<div style="font-weight:700;">
+{name.title()}
+</div>
+</div>
+""", unsafe_allow_html=True)
 
 
 # ==================================================
 # FOOTER
 # ==================================================
 st.markdown("""
-<div style="
-    text-align:center;
-    padding:35px 10px 15px;
-    color:#806b8a;
-">
-
-    <div style="
-        font-family:'Playfair Display',serif;
-        font-size:25px;
-        font-weight:700;
-    ">
-        🌸 FloraCoders 🌸
-    </div>
-
-    <div style="font-size:13px; margin-top:10px;">
-        Small Flowers · Big Dreams · Powered by AI
-    </div>
-
-    <div style="font-size:11px; margin-top:12px;">
-        Flower Species Classification Project
-    </div>
-
+<div style="text-align:center; padding:35px 10px 15px; color:#806b8a;">
+<div style="font-family:'Playfair Display',serif; font-size:25px; font-weight:700;">
+🌸 FloraCoders 🌸
+</div>
+<div style="font-size:13px; margin-top:10px;">
+Small Flowers · Big Dreams · Powered by AI
+</div>
+<div style="font-size:11px; margin-top:12px;">
+Flower Species Classification Project
+</div>
 </div>
 """, unsafe_allow_html=True)
